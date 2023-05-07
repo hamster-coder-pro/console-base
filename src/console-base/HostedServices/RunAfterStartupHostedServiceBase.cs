@@ -11,7 +11,11 @@ public abstract class RunAfterStartupHostedServiceBase : HostedServiceBase
 
     public override Task StartAsync(CancellationToken cancellationToken)
     {
-        Task.Delay(Timeout.InfiniteTimeSpan, HostApplicationLifetime.ApplicationStarted).ContinueWith(_ => ExecuteAsync(cancellationToken), TaskContinuationOptions.OnlyOnCanceled);
+        Task.Delay(Timeout.InfiniteTimeSpan, HostApplicationLifetime.ApplicationStarted).ContinueWith(async _ =>
+        {
+            await Task.Delay(100, cancellationToken);
+            await ExecuteAsync(cancellationToken);
+        }, TaskContinuationOptions.OnlyOnCanceled);
         return Task.CompletedTask;
     }
 
